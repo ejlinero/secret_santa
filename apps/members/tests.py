@@ -23,6 +23,18 @@ class MemberTestCase(TestCase):
             name='Isabel',
             email='isabel@email.com')
 
+    @staticmethod
+    def probability(member):
+        """ Probabilidad de resultados.
+            Puede ser cualquier miembro, excepto uno mismo, y el miembro
+            asignado a si mismo.
+        """
+        assigned_member = Member.objects.get(assigned_member=member.pk)
+        member_probability = Member.objects.all() \
+            .exclude(pk__in=[member.pk,
+                             assigned_member.pk])
+        return member_probability
+
     def test_create_member(self):
         all_old_members = Member.objects.all().count()
         Member.objects.create(
@@ -37,23 +49,57 @@ class MemberTestCase(TestCase):
             name='isabel',
             email='isabel@email.com')
 
-    def test_randomly_assinging_whit_3_members_raise_exception(self):
+    def test_randomly_assigning_whit_3_members_raise_exception(self):
         self.generate_3_members()
         self.assertRaises(InsufficientMemberError,
-                          Member.randomly_assinging)
+                          Member.randomly_assigning)
+
+    def test_clear_assigned(self):
+        self.generate_3_members()
+        luisa = Member.objects.get(name='Luisa')
+        rafael = Member.objects.get(name='Rafael')
+        luisa.assigned_member=rafael
+        luisa.save()
+        Member.clear_assigned()
+        self.assertEqual(0,
+                         len(Member.member_assigned()))
 
     def test_members_are_not_assigned_at_the_start(self):
         self.generate_3_members()
         self.generate_isabel_member()
-        self.assertEqual(4,
-                         len(Member.member_not_assingned_id_list()))
+        self.assertEqual(0,
+                         len(Member.member_assigned()))
 
-    def test_of_4_members_3_member_are_not_assingned(self):
+    def test_of_4_members_3_member_are_not_assigned(self):
         self.generate_3_members()
         self.generate_isabel_member()
         isabel = Member.objects.get(name='Isabel')
-        isabel.assigned_member = Member.objects.get(name='Luisa')
+        luisa = Member.objects.get(name='Luisa')
+        isabel.assigned_member = luisa
         isabel.save()
-        self.assertEqual(3,
-                         len(Member.member_not_assingned_id_list()))
+        self.assertIn(luisa.pk,
+                      Member.member_assigned())
 
+    def test_4_members_probability(self):
+        self.generate_3_members()
+        self.generate_isabel_member()
+        Member.randomly_assigning()
+
+        rafael = Member.objects.get(name='Rafael')
+        luisa = Member.objects.get(name='Luisa')
+        ernesto = Member.objects.get(name='Ernesto')
+        isabel = Member.objects.get(name='Isabel')
+
+        isabel_probability = self.probability(isabel)
+        ernesto_probability = self.probability(ernesto)
+        luisa_probability = self.probability(luisa)
+        rafael_probability = self.probability(rafael)
+
+        self.assertIn(isabel.assigned_member,
+                      isabel_probability)
+        self.assertIn(ernesto.assigned_member,
+                      ernesto_probability)
+        self.assertIn(luisa.assigned_member,
+                      luisa_probability)
+        self.assertIn(rafael.assigned_member,
+                      rafael_probability)

@@ -41,3 +41,19 @@ class MemberTestCase(TestCase):
         self.generate_3_members()
         self.assertRaises(InsufficientMemberError,
                           Member.randomly_assinging)
+
+    def test_members_are_not_assigned_at_the_start(self):
+        self.generate_3_members()
+        self.generate_isabel_member()
+        self.assertEqual(4,
+                         len(Member.member_not_assingned_id_list()))
+
+    def test_of_4_members_3_member_are_not_assingned(self):
+        self.generate_3_members()
+        self.generate_isabel_member()
+        isabel = Member.objects.get(name='Isabel')
+        isabel.assigned_member = Member.objects.get(name='Luisa')
+        isabel.save()
+        self.assertEqual(3,
+                         len(Member.member_not_assingned_id_list()))
+

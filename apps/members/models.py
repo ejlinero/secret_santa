@@ -7,16 +7,16 @@ from .exceptions import InsufficientMemberError
 
 class Member(models.Model):
     """ Miembros que participan en el amigo invisible.
-    el atributo assigned_member se refiere al miembro asignado al que le 
+    el atributo assigned_member se refiere al miembro asignado al que le
     debemos hacer regalo.
     """
     name = models.CharField(max_length=16)
     email = models.EmailField(unique=True)
-    assigned_member = models.OneToOneField('self', 
-                                            default=None, 
-                                            null=True,
-                                            related_name='assigned',
-                                            on_delete=models.SET_NULL)
+    assigned_member = models.OneToOneField('self',
+                                           default=None,
+                                           null=True,
+                                           related_name='assigned',
+                                           on_delete=models.SET_NULL)
 
     @classmethod
     def randomly_assigning(cls):

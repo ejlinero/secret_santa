@@ -7,10 +7,8 @@ from ..serializers import MemberSerializer
 
 class MemberSerializerTest(BaseTestCase):
 
-    def setUp(self):
-        self.generate_isabel_member()
-
     def test_serializers_a_members(self):
+        self.generate_isabel_member()
         members = Member.objects.get(id=1)
         serializer = MemberSerializer(members)
         result_json = {'id': 1,

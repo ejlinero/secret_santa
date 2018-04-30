@@ -31,11 +31,15 @@ class BaseTestCase(TestCase):
             Puede ser cualquier miembro, excepto uno mismo, y el miembro
             asignado a si mismo.
             Arg:    recibe una instancia de Member
-            Return: Devuelve un QuerySet con todos las intancias que tienen la
+            Return: Devuelve un QuerySet con todos las instancias que tienen la
                     probabilidad de ser asignada.
         """
-        assigned_member = Member.objects.get(assigned_member=member.pk)
-        member_probability = Member.objects.all() \
-            .exclude(pk__in=[member.pk,
-                             assigned_member.pk])
+        try:
+            secret_santa = Member.objects.get(assigned_member=member.pk)
+        except Member.DoesNotExist:
+            exclude_list = [member.pk]
+            secret_santa = 'No tiene'
+        else:
+            exclude_list = [member.pk, secret_santa.pk]
+        member_probability = Member.objects.all().exclude(pk__in=exclude_list)
         return member_probability

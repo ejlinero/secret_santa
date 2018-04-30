@@ -41,7 +41,7 @@ Crear la base de datos.
 
 ## Ejecutar los test
 
-Desde el directorio de trabajo puedes ejecutar el siguiente comando para comprobar 18 test.
+Desde el directorio de trabajo puedes ejecutar el siguiente comando para comprobar 19 test.
 
 ```
 ./manage.py test apps.members

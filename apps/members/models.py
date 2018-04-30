@@ -33,16 +33,38 @@ class Member(models.Model):
         cls.clear_assigned()
         for member in member_list:
             # crea lista para evitar ser asignado a si mismo o a su
-            # asignado
-            if member.assigned_member:
-                exclude_list = [member.pk, member.assigned_member.pk]
-            else:
+            # amigo invisible
+            try:
+                secret_santa = Member.objects.get(assigned_member=member)
+            except Member.DoesNotExist:
                 exclude_list = [member.pk]
+            else:
+                exclude_list = [member.pk, secret_santa.pk]
             exclude_list += cls.member_assigned()
             all_posible_members = cls.objects.all() \
                 .exclude(pk__in=exclude_list)
+            all_posible_members = cls.avoid_member_without_secret_santa(
+                all_posible_members)
             member.assigned_member = random.choice(all_posible_members)
             member.save()
+
+    @classmethod
+    def avoid_member_without_secret_santa(cls, member_list):
+        """ Cuando únicamente quedan dos miembros por assignar, uno de los
+        miembros debe de ser ya amigo invisble de alguien, mientras que el
+        otro todavía no ha participado, o sea, que no es amigo invisible de
+        nadie y que está pendiente de asignar. En este caso debemos de elegir
+        siempre el miembro que no ha participado todavía, en otro caso, al
+        final de la asignación aleatoria, se nos quedará un miembro sin
+        asignar.
+        """
+        if len(member_list) == 2:
+            if member_list[0].assigned_member:
+                return [member_list[1]]
+            else:
+                return [member_list[0]]
+        else:
+            return member_list
 
     @classmethod
     def member_assigned(cls):

@@ -77,3 +77,18 @@ class MemberModelTestCase(BaseTestCase):
                       luisa_probability)
         self.assertIn(rafael.assigned_member,
                       rafael_probability)
+
+    def test_avoid_member_without_secret_santa(self):
+        self.generate_3_members()
+        self.generate_isabel_member()
+        rafael = Member.objects.get(name='Rafael')
+        luisa = Member.objects.get(name='Luisa')
+        ernesto = Member.objects.get(name='Ernesto')
+        isabel = Member.objects.get(name='Isabel')
+        rafael.assigned_member = luisa
+        rafael.save()
+        luisa.assigned_member = ernesto
+        luisa.save()
+        self.assertEqual([isabel],
+                          Member.avoid_member_without_secret_santa([isabel,
+                                                                    rafael]))

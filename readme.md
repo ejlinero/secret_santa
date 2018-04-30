@@ -51,7 +51,7 @@ Desde el directorio de trabajo puedes ejecutar el siguiente comando para comprob
 
 ## Endpoints
 
-Para introducir un miembro enviar por post  
+Para introducir un miembro, enviar por post  
 
 {'name': nombre_usuario
  'email': email_usuario }
@@ -60,7 +60,7 @@ Para introducir un miembro enviar por post
 [POST] api/v1/member/create 
 ``` 
 
-Para generar la parejas.
+Para generar las parejas.
 
 ```
 [POST] api/v1/member/randomly_assigning 

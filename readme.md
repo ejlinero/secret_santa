@@ -5,10 +5,12 @@ Aplicación para generar parejas de amigos invisibles.
 
 ## Consideraciones 
 
-Se considera que para generar de forma aleatoria las parejas, debe de existir al menos 4 componenetes.
+Se considera que para generar de forma aleatoria las parejas, deben de existir al menos 4 participantes.
 
-Además un participante no podrá ser asignado al mismo participante que él tiene asignado.
+Además a un participante no se le asignará su amigo invisible, evitando de esa forma que una pareja se realizen regalos entre sí.
 
+Al finalizar la asignación aletoria de parejas, al quedar dos participantes pendientes de asignar a un amigo invisible, se seleccionará siempre al participante que no es amigo invisible de nadie, ya que si se
+selecciona al pariticipante que ya es amigo invisible, nos quedará un participante por asignar sin pareja.
 
 ## Asignación Aleatoria
 

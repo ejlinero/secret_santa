@@ -5,6 +5,8 @@ from .models import Member
 
 
 class MemberSerializer(serializers.ModelSerializer):
+    """ Serealizador para crear miembros
+    """
 
     class Meta:
         model = Member
@@ -12,6 +14,8 @@ class MemberSerializer(serializers.ModelSerializer):
 
 
 class AssignedMemberSerializer(serializers.ModelSerializer):
+    """ Serializador para mostrar el miembro asociado.
+    """
 
     class Meta:
         model = Member

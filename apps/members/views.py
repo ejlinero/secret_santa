@@ -20,6 +20,8 @@ def create(request):
 
 @api_view(['POST'])
 def randomly_assigning(request):
+    """ Asigna los miembros aleatoriamente.
+    """
     try:
         Member.randomly_assigning()
         return Response(status=status.HTTP_200_OK)
@@ -28,6 +30,8 @@ def randomly_assigning(request):
 
 @api_view(['GET'])
 def get_assigned_member(request, pk):
+    """ Obtiene el miembro asociado.
+    """
     try:
         member = Member.objects.get(pk=pk)
     except Member.DoesNotExist:

@@ -8,7 +8,7 @@ from rest_framework import status
 
 from .base import BaseTestCase
 from ..models import Member
-from ..serializers import MemberSerializer
+from ..serializers import MemberSerializer, AssignedMemberSerializer
 
 
 client = Client()
@@ -66,7 +66,7 @@ class RandomlyAssigningTest(BaseTestCase):
     def test_randomly_assigning_whit_3_members_return_http_400(self):
         response = client.post(
             reverse('randomly_assigning'),
-            data=json.dumps({'value':'key'}),
+            data=json.dumps({'key':'value'}),
             content_type='application/json')
         self.assertEqual(response.status_code,
                          status.HTTP_428_PRECONDITION_REQUIRED)
@@ -75,6 +75,40 @@ class RandomlyAssigningTest(BaseTestCase):
         self.generate_isabel_member()
         response = client.post(
             reverse('randomly_assigning'),
-            data=json.dumps({'value':'key'}),
+            data=json.dumps({'value':'value'}),
             content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class GetAssignedMemberTest(BaseTestCase):
+
+    def setUp(self):
+        self.generate_isabel_member()
+        self.isabel = Member.objects.get(pk=1)
+
+    def test_get_assigned_member(self):
+        response = client.get(
+            reverse('get_assigned_member', kwargs={'pk': 1}))
+        serializer = AssignedMemberSerializer(self.isabel)
+        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_assigned_member_after_assigning(self):
+        self.generate_3_members()
+        rafael = Member.objects.get(name='Rafael')
+        self.isabel.assigned_member = rafael
+        self.isabel.save()
+
+        response = client.get(
+            reverse('get_assigned_member', kwargs={'pk': 1}))
+        serializer = AssignedMemberSerializer(self.isabel)
+
+        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_member_not_found(self):
+        response = client.get(
+            reverse('get_assigned_member', kwargs={'pk': 30}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+

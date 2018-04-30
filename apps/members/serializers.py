@@ -8,4 +8,11 @@ class MemberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Member
-        fields = ('__all__')
+        fields = ('id', 'name', 'email')
+
+
+class AssignedMemberSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Member
+        fields = ('assigned_member',)
